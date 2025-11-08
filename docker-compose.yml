@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: careon-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - /dev/bus/usb:/dev/bus/usb  # USB passthrough for ADB
+    environment:
+      - DATABASE_URL=sqlite:///./data/database.db
+      - DEBUG=True
+    privileged: true  # Required for ADB access
+    networks:
+      - careon-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: careon-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - careon-network
+    restart: unless-stopped
+
+networks:
+  careon-network:
+    driver: bridge
+
+volumes:
+  data:
+  logs:
