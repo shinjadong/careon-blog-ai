@@ -10,6 +10,7 @@ from loguru import logger
 
 from app.models.device import DeviceProfile
 from app.models.coordinate import CoordinateConfig, UIElementType, CalibrationMethod
+from app.core.ui_elements import get_default_coordinates
 from app.schemas.device import DeviceProfileCreate, DeviceProfileUpdate
 from app.schemas.coordinate import CoordinateCreate, CoordinateUpdate
 from app.services.adb_controller import ADBController, list_connected_devices
@@ -121,100 +122,14 @@ class DeviceManager:
         """
         Initialize default coordinates based on resolution
 
+        Uses ui_elements.py as single source of truth
+
         Args:
             profile: DeviceProfile instance
         """
         try:
-            w = profile.width
-            h = profile.height
-
-            # Define default coordinates based on common UI positions
-            default_coords = [
-                {
-                    "element_type": UIElementType.WRITE_BUTTON,
-                    "element_name": "+ 아이콘 (메인 화면)",
-                    "x": int(w * 0.85),
-                    "y": int(h * 0.93),
-                    "description": "메인 화면 우하단 + 아이콘",
-                },
-                {
-                    "element_type": UIElementType.HOME_BUTTON,
-                    "element_name": "블로그 글쓰기 버튼",
-                    "x": int(w * 0.50),
-                    "y": int(h * 0.60),
-                    "description": "+ 아이콘 클릭 후 나타나는 블로그 글쓰기 메뉴",
-                },
-                {
-                    "element_type": UIElementType.TITLE_FIELD,
-                    "element_name": "제목 입력 필드",
-                    "x": int(w * 0.50),
-                    "y": int(h * 0.15),
-                    "description": "에디터 상단 제목 입력 영역",
-                },
-                {
-                    "element_type": UIElementType.CONTENT_FIELD,
-                    "element_name": "본문 입력 필드",
-                    "x": int(w * 0.50),
-                    "y": int(h * 0.40),
-                    "description": "에디터 본문 입력 영역",
-                },
-                {
-                    "element_type": UIElementType.IMAGE_BUTTON,
-                    "element_name": "이미지 추가 버튼",
-                    "x": int(w * 0.15),
-                    "y": int(h * 0.93),
-                    "description": "에디터 하단 이미지 추가 버튼",
-                },
-                {
-                    "element_type": UIElementType.PUBLISH_BUTTON,
-                    "element_name": "발행 버튼",
-                    "x": int(w * 0.90),
-                    "y": int(h * 0.08),
-                    "description": "에디터 상단 우측 발행 버튼",
-                },
-                {
-                    "element_type": UIElementType.TEXT_SIZE_BUTTON,
-                    "element_name": "텍스트 크기 버튼",
-                    "x": int(w * 0.70),
-                    "y": int(h * 0.93),
-                    "description": "에디터 하단 텍스트 크기 변경 버튼 (가 아이콘)",
-                },
-                {
-                    "element_type": UIElementType.BOLD_BUTTON,
-                    "element_name": "최소 텍스트 크기",
-                    "x": int(w * 0.20),
-                    "y": int(h * 0.70),
-                    "description": "텍스트 크기 팝업에서 가장 작은 크기",
-                },
-                {
-                    "element_type": UIElementType.LINK_BUTTON,
-                    "element_name": "링크 추가 버튼",
-                    "x": int(w * 0.65),
-                    "y": int(h * 0.85),
-                    "description": "이미지 선택 후 링크 추가 버튼",
-                },
-                {
-                    "element_type": UIElementType.CONFIRM_BUTTON,
-                    "element_name": "확인 버튼",
-                    "x": int(w * 0.65),
-                    "y": int(h * 0.60),
-                    "description": "일반 확인 버튼",
-                },
-                {
-                    "element_type": UIElementType.SHARE_BUTTON,
-                    "element_name": "공유 버튼",
-                    "x": int(w * 0.90),
-                    "y": int(h * 0.08),
-                    "description": "발행 후 공유 버튼",
-                },
-                {
-                    "element_type": UIElementType.COPY_LINK_BUTTON,
-                    "element_name": "링크 복사 버튼",
-                    "x": int(w * 0.50),
-                    "y": int(h * 0.50),
-                    "description": "URL 링크 복사 버튼",
-                },
-            ]
+            # Get default coordinates from centralized definition
+            default_coords = get_default_coordinates(profile.width, profile.height)
 
             for coord_data in default_coords:
                 coord = CoordinateConfig(

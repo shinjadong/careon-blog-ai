@@ -13,6 +13,7 @@ import json
 import uuid
 
 from app.core.database import get_db
+from app.core.ui_elements import get_calibration_steps
 from app.services.device_manager import DeviceManager
 from app.services.adb_controller import ADBController
 from app.services.debug_logger import get_debug_logger, remove_debug_logger
@@ -30,82 +31,8 @@ router = APIRouter()
 # In-memory storage for active calibration sessions
 active_sessions: Dict[str, dict] = {}
 
-
-# Calibration workflow steps
-CALIBRATION_STEPS = [
-    {
-        "element_type": UIElementType.WRITE_BUTTON,
-        "element_name": "+ 아이콘 (메인 화면)",
-        "instructions": "네이버 블로그 앱 메인 화면에서 우하단 '+' 아이콘을 클릭하세요.",
-        "help_text": "화면 오른쪽 하단에 있는 플러스(+) 버튼입니다. 클릭하면 메뉴가 열립니다.",
-    },
-    {
-        "element_type": UIElementType.HOME_BUTTON,
-        "element_name": "블로그 글쓰기 버튼",
-        "instructions": "메뉴에서 '블로그 글쓰기' 버튼을 클릭하세요.",
-        "help_text": "+ 아이콘을 누른 후 나타나는 메뉴에서 '블로그 글쓰기' 옵션을 선택합니다.",
-    },
-    {
-        "element_type": UIElementType.TITLE_FIELD,
-        "element_name": "제목 입력 필드",
-        "instructions": "에디터 화면에서 '제목을 입력하세요' 영역을 클릭하세요.",
-        "help_text": "에디터 상단의 제목 입력 필드입니다.",
-    },
-    {
-        "element_type": UIElementType.CONTENT_FIELD,
-        "element_name": "본문 입력 필드",
-        "instructions": "에디터 화면에서 본문 입력 영역을 클릭하세요.",
-        "help_text": "제목 아래의 넓은 본문 작성 영역입니다.",
-    },
-    {
-        "element_type": UIElementType.IMAGE_BUTTON,
-        "element_name": "이미지 추가 버튼",
-        "instructions": "에디터 하단 툴바에서 '이미지' 추가 버튼을 클릭하세요.",
-        "help_text": "보통 사진 아이콘으로 표시됩니다.",
-    },
-    {
-        "element_type": UIElementType.TEXT_SIZE_BUTTON,
-        "element_name": "텍스트 크기 버튼",
-        "instructions": "에디터 하단 툴바에서 '텍스트 크기' 버튼(가 아이콘)을 클릭하세요.",
-        "help_text": "텍스트 크기를 변경하는 아이콘입니다. 보통 '가' 또는 'A' 모양입니다.",
-    },
-    {
-        "element_type": UIElementType.BOLD_BUTTON,
-        "element_name": "최소 텍스트 크기 선택",
-        "instructions": "텍스트 크기 팝업에서 '가장 작은 크기'를 클릭하세요.",
-        "help_text": "보통 9pt 또는 가장 왼쪽의 작은 크기 옵션입니다.",
-    },
-    {
-        "element_type": UIElementType.LINK_BUTTON,
-        "element_name": "링크 추가 버튼",
-        "instructions": "이미지를 선택한 상태에서 '링크 추가' 버튼을 클릭하세요.",
-        "help_text": "이미지에 URL을 연결하는 링크 아이콘 버튼입니다.",
-    },
-    {
-        "element_type": UIElementType.PUBLISH_BUTTON,
-        "element_name": "발행 버튼",
-        "instructions": "에디터 상단 우측의 '발행' 버튼을 클릭하세요.",
-        "help_text": "글 작성 완료 후 발행하는 버튼입니다.",
-    },
-    {
-        "element_type": UIElementType.CONFIRM_BUTTON,
-        "element_name": "확인 버튼",
-        "instructions": "일반적인 '확인' 버튼을 클릭하세요.",
-        "help_text": "다이얼로그나 설정 화면의 확인 버튼입니다.",
-    },
-    {
-        "element_type": UIElementType.SHARE_BUTTON,
-        "element_name": "공유 버튼",
-        "instructions": "발행 완료 후 '공유' 버튼을 클릭하세요.",
-        "help_text": "발행된 글을 공유하는 버튼입니다.",
-    },
-    {
-        "element_type": UIElementType.COPY_LINK_BUTTON,
-        "element_name": "링크 복사 버튼",
-        "instructions": "공유 메뉴에서 '링크 복사' 버튼을 클릭하세요.",
-        "help_text": "블로그 포스트 URL을 복사하는 버튼입니다.",
-    },
-]
+# Calibration workflow steps (loaded from ui_elements.py)
+CALIBRATION_STEPS = get_calibration_steps()
 
 
 @router.post("/sessions", response_model=CalibrationSession)

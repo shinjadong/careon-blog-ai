@@ -9,7 +9,7 @@ import sys
 
 from app.core.config import settings
 from app.core.database import Base, engine, init_db
-from app.api.v1 import devices, calibration
+from app.api.v1 import devices, calibration, automation
 
 # Configure logging
 logger.remove()
@@ -66,6 +66,12 @@ app.include_router(
     calibration.router,
     prefix=f"{settings.API_V1_PREFIX}/calibration",
     tags=["Calibration"],
+)
+
+app.include_router(
+    automation.router,
+    prefix=f"{settings.API_V1_PREFIX}/automation",
+    tags=["Automation"],
 )
 
 

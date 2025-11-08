@@ -10,43 +10,53 @@ from app.core.database import Base
 
 
 class UIElementType(str, enum.Enum):
-    """UI element types for Naver Blog app"""
+    """
+    UI element types for Naver Blog app
 
-    # Main Navigation
-    WRITE_BUTTON = "write_button"
-    HOME_BUTTON = "home_button"
+    Updated naming for clarity and consistency (2025-11-08)
+    """
+
+    # Main Navigation (Step 1-2)
+    MAIN_PLUS_BUTTON = "main_plus_button"  # + 아이콘 (메인 화면)
+    WRITE_MENU_BLOG = "write_menu_blog"    # 블로그 글쓰기 메뉴 버튼
+
+    # Editor Fields (Step 3-4)
+    TITLE_FIELD = "title_field"            # 제목 입력 필드
+    CONTENT_FIELD = "content_field"        # 본문 입력 필드
+
+    # Editor Toolbar (Step 5-8)
+    IMAGE_BUTTON = "image_button"          # 이미지 추가 버튼
+    TEXT_SIZE_BUTTON = "text_size_button"  # 텍스트 크기 버튼
+    TEXT_SIZE_SMALLEST = "text_size_smallest"  # 최소 크기 선택
+    LINK_BUTTON = "link_button"            # 링크 추가 버튼
+
+    # Publishing (Step 9-10)
+    PUBLISH_BUTTON = "publish_button"      # 발행 버튼
+    CONFIRM_BUTTON = "confirm_button"      # 확인 버튼
+
+    # Sharing (Step 11-12)
+    SHARE_BUTTON = "share_button"          # 공유 버튼
+    COPY_URL_BUTTON = "copy_url_button"    # 링크 복사 버튼
+
+    # Optional/Future
     MENU_BUTTON = "menu_button"
-
-    # Editor Elements
-    TITLE_FIELD = "title_field"
-    CONTENT_FIELD = "content_field"
-    IMAGE_BUTTON = "image_button"
-    LINK_BUTTON = "link_button"
-    TEXT_COLOR_BUTTON = "text_color_button"
-    TEXT_SIZE_BUTTON = "text_size_button"
-    BOLD_BUTTON = "bold_button"
-
-    # Color Palette
-    WHITE_COLOR = "white_color"
-    BLACK_COLOR = "black_color"
-    COLOR_PICKER = "color_picker"
-
-    # Publishing
-    PUBLISH_BUTTON = "publish_button"
     PUBLISH_SETTINGS_BUTTON = "publish_settings_button"
-    CONFIRM_BUTTON = "confirm_button"
     CANCEL_BUTTON = "cancel_button"
 
-    # Share & URL
-    SHARE_BUTTON = "share_button"
-    COPY_LINK_BUTTON = "copy_link_button"
-
-    # Gallery
+    # Gallery (for image selection)
     GALLERY_FIRST_IMAGE = "gallery_first_image"
     GALLERY_SELECT_BUTTON = "gallery_select_button"
 
-    # Custom (사용자 정의)
-    CUSTOM = "custom"
+    # Deprecated (no longer used)
+    TEXT_COLOR_BUTTON = "text_color_button"  # @deprecated: Use TEXT_SIZE instead
+    WHITE_COLOR = "white_color"              # @deprecated: Use TEXT_SIZE_SMALLEST
+    BLACK_COLOR = "black_color"              # @deprecated
+    COLOR_PICKER = "color_picker"            # @deprecated
+    BOLD_BUTTON = "bold_button"              # @deprecated: Use TEXT_SIZE_SMALLEST
+
+    # Aliases (backward compatibility)
+    WRITE_BUTTON = "main_plus_button"       # Alias for MAIN_PLUS_BUTTON
+    HOME_BUTTON = "write_menu_blog"         # Alias for WRITE_MENU_BLOG
 
 
 class CalibrationMethod(str, enum.Enum):
